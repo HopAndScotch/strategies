@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Консультация по учебным стратегиям</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+/* VOICE: рабочий инструмент методиста, спокойный и чёткий, без украшений (оформление позже)
+   IDEA: бланк консультации, который заполняется по ходу 45 минут
+   PICTURE: диаграмма Венна студента, которая собирается из ответов
+   COLOUR and TYPE: чёрное на белом, один серый; Inter
+   LAYOUT: шапка с таймером, вкладки по этапам, одна колонка форм; подбор — список + закреплённая панель выбранного */
+:root{color-scheme:light dark;--bg:light-dark(#fff,#111);--ink:light-dark(#111,#eee);--mute:light-dark(#666,#9a9a9a);--line:light-dark(#dcdcdc,#333);--soft:light-dark(#f4f4f4,#1c1c1c);--hi:light-dark(#111,#eee);--hiInk:light-dark(#fff,#111)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;overflow-x:clip}
+h1{font-size:20px;line-height:1.2;margin:0;font-weight:600}
+h2{font-size:28px;line-height:1.1;margin:0 0 6px;font-weight:600;text-wrap:balance}
+h3{font-size:18px;margin:28px 0 10px;font-weight:600}
+p{margin:0 0 10px}
+.mute{color:var(--mute);font-size:14px}
+button,select,input,textarea{font:inherit;color:inherit}
+button{min-height:40px;padding:8px 14px;border:1px solid var(--ink);background:var(--bg);border-radius:8px;cursor:pointer}
+button.pri{background:var(--hi);color:var(--hiInk)}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,label.chip:focus-within{outline:2px solid var(--ink);outline-offset:2px}
+input[type=text],input[type=date],input[type=url],select,textarea{width:100%;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+textarea{min-height:76px;resize:vertical}
+label.f{display:block;margin:14px 0 6px;font-weight:500}
+label.f small{display:block;font-weight:400;color:var(--mute);font-size:13px}
+/* header */
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px max(3vw,16px)}
+.timer{display:flex;gap:8px;align-items:center}
+.clock{font-variant-numeric:tabular-nums;font-size:22px;font-weight:600;min-width:70px}
+.clock.over{text-decoration:underline}
+.stage{font-size:14px;color:var(--mute)}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+nav{display:flex;overflow-x:auto;padding:0 max(3vw,16px);gap:4px}
+nav button{border:0;border-bottom:3px solid transparent;border-radius:0;background:none;padding:10px 12px;white-space:nowrap;flex:none;font-size:15px}
+nav button span{color:var(--mute);font-size:13px;margin-left:6px;font-variant-numeric:tabular-nums}
+nav button[aria-selected=true]{border-bottom-color:var(--ink);font-weight:600}
+nav button.now span{color:var(--ink);font-weight:600}
+main{padding:24px max(3vw,16px) 80px;max-width:1240px;margin:0 auto}
+section.tab{display:none}section.tab.on{display:block}
+.col{max-width:760px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:0 20px}
+.circle{border:1px solid var(--line);border-radius:12px;padding:4px 20px 20px;margin:18px 0}
+.circle h3{margin-top:18px}
+.say{border-left:3px solid var(--ink);padding:8px 14px;background:var(--soft);margin:12px 0;font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+label.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:15px;min-height:40px}
+label.chip input{margin:0;width:16px;height:16px;accent-color:#111}
+label.chip:has(input:checked){background:var(--hi);color:var(--hiInk);border-color:var(--hi)}
+.qs{counter-reset:q}
+.q{border-top:1px solid var(--line);padding:6px 0 10px}
+.tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--mute);margin-left:6px;font-weight:400;vertical-align:1px}
+/* theory */
+.crib{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;margin-top:16px}
+.crib>div{border:1px solid var(--line);border-radius:12px;padding:18px}
+.crib h3{margin:0 0 8px}
+.crib ol,.crib ul{margin:0;padding-left:20px}
+.cycle{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.cycle b{border:1px solid var(--ink);border-radius:8px;padding:6px 10px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:15px}
+td,th{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+details{border:1px solid var(--line);border-radius:12px;padding:12px 18px;margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+/* pick */
+.pick{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.filters>*{flex:1 1 160px}
+.filters label.chip{flex:0 0 auto}
+.sugg{background:var(--soft);border-radius:12px;padding:14px 16px;margin:10px 0}
+.sugg .chips{margin-top:8px}
+.sugg button{min-height:34px;padding:4px 10px;font-size:14px;border-color:var(--line)}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0}
+.card.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.card.hint .hintmark{display:inline-block}
+.hintmark{display:none;font-size:12px;background:var(--hi);color:var(--hiInk);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.ch{display:flex;gap:12px;align-items:flex-start}
+.ch input{width:22px;height:22px;margin-top:3px;accent-color:#111;flex:none}
+.ch .en{font-weight:600;font-size:17px}
+.meta{font-size:13px;color:var(--mute);margin-top:2px}
+.prob{font-style:italic;margin:8px 0 4px}
+.card details{border:0;padding:0;margin-top:6px}
+.card details summary{font-weight:500;font-size:14px;color:var(--mute)}
+.card dl{margin:8px 0 0;font-size:15px}
+.card dt{font-weight:600;margin-top:8px}
+.card dd{margin:2px 0 0}
+.card ol{margin:4px 0 0;padding-left:20px}
+aside.picked{position:sticky;top:130px;border:1px solid var(--ink);border-radius:12px;padding:16px;max-height:calc(100vh - 150px);overflow:auto}
+aside.picked h3{margin:0 0 4px}
+.pk{border-top:1px solid var(--line);padding:10px 0}
+.pk b{display:block}
+.pk textarea{min-height:64px;font-size:15px;margin-top:6px}
+.warn{font-size:14px;margin-top:6px}
+/* plan */
+.skills td:first-child{width:55%}
+.scale{display:flex;gap:6px}
+.scale label{display:inline-flex;width:40px;height:40px;border:1px solid var(--line);border-radius:8px;align-items:center;justify-content:center;cursor:pointer;font-variant-numeric:tabular-nums}
+.scale input{position:absolute;opacity:0;width:1px;height:1px}
+.scale label:has(input:checked){background:var(--hi);color:var(--hiInk);border-color:var(--hi)}
+.scale label:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+.mat{display:grid;grid-template-columns:150px minmax(0,1fr) minmax(0,1fr) 44px;gap:8px;margin:8px 0;align-items:start}
+.mat button{padding:0;min-height:44px}
+.export{border:1px solid var(--ink);border-radius:12px;padding:18px;margin-top:28px}
+.export .actions{margin-top:10px}
+#msg{min-height:22px;margin-top:10px;font-size:15px}
+/* venn (same markup in tool and pdf) */
+.venn{position:relative;width:520px;height:400px;max-width:100%;margin:10px auto}
+.venn .c{position:absolute;width:250px;height:250px;border-radius:50%;border:1.5px solid #111;background:rgba(0,0,0,.035)}
+.venn .c1{left:65px;top:0}.venn .c2{left:205px;top:0}.venn .c3{left:135px;top:130px}
+.venn .t{position:absolute;font-size:12px;line-height:1.3;text-align:center;color:#111}
+.venn .t b{display:block;font-size:11px;letter-spacing:.02em;margin-bottom:3px;text-transform:uppercase}
+.venn .t1{left:86px;top:62px;width:104px}.venn .t2{left:330px;top:62px;width:104px}.venn .t3{left:180px;top:300px;width:160px}
+.venn .ctr{position:absolute;left:192px;top:118px;width:136px;background:#111;color:#fff;border-radius:10px;padding:8px 8px;font-size:11px;line-height:1.3;text-align:center}
+.venn .ctr b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;opacity:.8}
+.vwrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+.vwrap .venn{transform-origin:top left}
+@media(max-width:900px){.pick{grid-template-columns:minmax(0,1fr)}aside.picked{position:static;max-height:none}}
+@media(max-width:600px){header{position:static}h2{font-size:24px}.mat{grid-template-columns:minmax(0,1fr) 44px}.mat select{grid-column:1/-1}.mat input{grid-column:1}.clock{font-size:18px}}
+/* PDF pages (offscreen) */
+#pdfroot{position:fixed;left:-12000px;top:0;width:794px;background:#fff;color:#111}
+.pg{width:794px;height:1123px;padding:56px 64px 40px;background:#fff;color:#111;display:flex;flex-direction:column;font:13px/1.5 Inter,Arial,sans-serif}
+.pg .pb{flex:1;overflow:hidden}
+.pg .pf{display:flex;justify-content:space-between;font-size:10px;color:#777;border-top:1px solid #ddd;padding-top:8px}
+.pg h1{font-size:30px;line-height:1.1;margin:0 0 6px}
+.pg h2{font-size:20px;margin:22px 0 8px;line-height:1.2}
+.pg .kicker{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#555;margin-bottom:14px}
+.pg .kv{display:grid;grid-template-columns:140px 1fr;gap:4px 12px;font-size:12.5px;margin:10px 0}
+.pg .kv div:nth-child(odd){color:#666}
+.pg .box{border:1px solid #ccc;border-radius:8px;padding:12px 14px;margin:10px 0}
+.pg .pc{border:1.5px solid #111;border-radius:10px;padding:14px 16px;margin:12px 0}
+.pg .pc .en{font-size:16px;font-weight:700}
+.pg .pc .meta{font-size:10.5px;color:#555;margin:2px 0 6px}
+.pg .pc .prob{font-style:italic;margin:6px 0}
+.pg .pc dt{font-weight:600;margin-top:6px}
+.pg .pc dd{margin:1px 0 0}
+.pg .pc ol{margin:2px 0 0;padding-left:18px}
+.pg .pc .tac{background:#f1f1f1;border-radius:6px;padding:8px 10px;margin-top:8px}
+.pg .bar{display:grid;grid-template-columns:1fr 130px 24px;gap:10px;align-items:center;font-size:12.5px;margin:6px 0}
+.pg .bar i{display:block;height:10px;border:1px solid #111;border-radius:3px;position:relative}
+.pg .bar i em{position:absolute;left:0;top:0;bottom:0;background:#111}
+.pg .area{font-size:22px;font-weight:700;margin:6px 0 4px;border-bottom:2px solid #111;padding-bottom:6px}
+.pg .cycle b{font-size:12px}
+.pg .lnk{word-break:break-all;color:#111}
+</style>
+</head>
+<body>
+<header>
+ <div class="top">
+  <div>
+   <h1>Консультация по учебным стратегиям · [Школа]</h1>
+   <div class="stage" id="stageLbl">Таймер не запущен</div>
+  </div>
+  <div class="timer">
+   <span class="clock" id="clock">00:00</span>
+   <button id="tStart" class="pri">Старт</button>
+   <button id="tReset">Сброс</button>
+  </div>
+  <div class="actions">
+   <button id="saveJson">Сохранить сессию</button>
+   <button id="loadJson">Открыть сессию</button>
+   <input type="file" id="fileIn" accept=".json,application/json" hidden>
+   <button id="newSess">Новая консультация</button>
+  </div>
+ </div>
+ <nav role="tablist" id="nav">
+  <button role="tab" data-tab="t0" aria-selected="true">1. Рамка<span>0–3</span></button>
+  <button role="tab" data-tab="t1">2. Интервью<span>3–15</span></button>
+  <button role="tab" data-tab="t2">3. Теория<span>15–22</span></button>
+  <button role="tab" data-tab="t3">4. Подбор техник<span>22–37</span></button>
+  <button role="tab" data-tab="t4">5. План и PDF<span>37–45</span></button>
+ </nav>
+</header>
+
+<main>
+<!-- ===== 0. Рамка ===== -->
+<section class="tab on" id="t0">
+ <div class="col">
+  <h2>Знакомство и рамка</h2>
+  <p class="mute">0–3 минуты. Заполните данные студента и покажите первый слайд с диаграммой Венна.</p>
+  <div class="say">«Сегодня мы вместе заполним три круга: ваши цели и трудности, интересы и предпочтения, время и ресурсы. Там, где они пересекаются, окажутся техники, которые подойдут именно вам. В конце вы получите личный план в PDF».</div>
+  <div class="grid2">
+   <div><label class="f" for="i_name">Имя студента</label><input type="text" id="i_name" data-k="info.name"></div>
+   <div><label class="f" for="i_date">Дата</label><input type="date" id="i_date" data-k="info.date"></div>
+   <div><label class="f" for="i_meth">Методист</label><input type="text" id="i_meth" data-k="info.methodist"></div>
+   <div><label class="f" for="i_level">Уровень</label>
+    <select id="i_level" data-k="info.level"><option value="">— не определён —</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select></div>
+  </div>
+  <label class="f" for="i_status">Статус в школе<small>Учится сейчас / только пришёл / закончил курс; группа или индивидуально</small></label>
+  <input type="text" id="i_status" data-k="info.status">
+  <label class="f" for="i_contact">Контакт для отправки материалов</label>
+  <input type="text" id="i_contact" data-k="info.contact">
+ </div>
+</section>
+
+<!-- ===== 1. Интервью ===== -->
+<section class="tab" id="t1">
+ <div class="col">
+  <h2>Интервью</h2>
+  <p class="mute">3–15 минут. Идите по трём кругам, потом — как студент учится сейчас. Внизу каждого круга сформулируйте суть в одной строке: она попадёт в диаграмму в PDF.</p>
+
+  <div class="circle">
+   <h3>Круг 1. Цели и трудности</h3>
+   <label class="f" for="c1_goal">Зачем вам английский сейчас? Что изменится, когда цель будет достигнута?</label><textarea id="c1_goal" data-k="c1.goal"></textarea>
+   <label class="f" for="c1_dead">Есть ли срок или событие? <small>Экзамен, переезд, собеседование, поездка</small></label><input type="text" id="c1_dead" data-k="c1.deadline">
+   <label class="f" for="c1_succ">Что хотите уметь через 2–3 месяца? Как поймёте, что получилось?</label><textarea id="c1_succ" data-k="c1.success"></textarea>
+   <label class="f" for="c1_hard">Что сейчас даётся труднее всего?</label><textarea id="c1_hard" data-k="c1.hard"></textarea>
+   <label class="f">Трудности, которые звучат в ответах <small>Отметки подсветят подходящие техники на вкладке «Подбор»</small></label>
+   <div class="chips" id="diffChips"></div>
+   <label class="f" for="v1">Кратко для диаграммы <small>До 70 символов: «Говорить на созвонах без пауз к марту»</small></label><input type="text" id="v1" maxlength="70" data-k="venn.c1">
+  </div>
+
+  <div class="circle">
+   <h3>Круг 2. Интересы и предпочтения</h3>
+   <label class="f" for="c2_top">Чем увлекаетесь? О чём любите читать, смотреть, говорить — хоть по-русски?</label><textarea id="c2_top" data-k="c2.topics"></textarea>
+   <label class="f">Что нравится больше</label><div class="chips" id="prefChips"></div>
+   <label class="f" for="c2_like">Какие виды самостоятельной работы нравятся, а какие хочется отложить?</label><textarea id="c2_like" data-k="c2.likes"></textarea>
+   <label class="f" for="c2_past">Что уже пробовали? Что сработало, что бросили и почему?</label><textarea id="c2_past" data-k="c2.past"></textarea>
+   <label class="f" for="v2">Кратко для диаграммы</label><input type="text" id="v2" maxlength="70" data-k="venn.c2">
+  </div>
+
+  <div class="circle">
+   <h3>Круг 3. Время и ресурсы</h3>
+   <label class="f" for="c3_time">Сколько времени в неделю реально есть на самостоятельные занятия?</label><input type="text" id="c3_time" data-k="c3.time">
+   <label class="f">Когда удобно</label><div class="chips" id="whenChips"></div>
+   <label class="f" for="c3_tools">Какими приложениями, сервисами, ИИ уже пользуетесь?</label><textarea id="c3_tools" data-k="c3.tools"></textarea>
+   <label class="f" for="c3_env">Где ещё в жизни есть английский? <small>Работа, друзья, поездки, хобби</small></label><textarea id="c3_env" data-k="c3.env"></textarea>
+   <label class="f" for="v3">Кратко для диаграммы</label><input type="text" id="v3" maxlength="70" data-k="venn.c3">
+  </div>
+
+  <h3>Как вы учитесь сейчас</h3>
+  <p class="mute">Вопросы показывают, какими приёмами человек уже пользуется. Метка — к какому измерению S²R относится ответ.</p>
+  <div class="qs" id="nowQs"></div>
+ </div>
+</section>
+
+<!-- ===== 2. Теория ===== -->
+<section class="tab" id="t2">
+ <h2>Мини-презентация: шпаргалка</h2>
+ <p class="mute">15–22 минуты. Порядок совпадает со слайдами. Сначала диаграмма, затем термины, S²R, цикл и то, чему студент учится сам.</p>
+ <div class="crib">
+  <div><h3>1. Диаграмма Венна</h3><p>Хорошая стратегия — на пересечении трёх кругов: цели и трудности, интересы и предпочтения, время и ресурсы. Техника, которая подходит под цель, но скучна или не влезает в расписание, не приживётся.</p></div>
+  <div><h3>2. Стратегия, техника, тактика</h3>
+   <ul><li><b>Стратегия</b> — общее направление: «я учу слова так, чтобы вспоминать их в речи».</li>
+   <li><b>Техника</b> — конкретный проверенный приём: интервальное повторение.</li>
+   <li><b>Тактика</b> — как именно я применяю технику в своей жизни: 10 минут карточек в метро, только фразы с работы.</li></ul>
+   <p class="mute" style="margin-top:8px">Аналогия со спортом: стать выносливее → интервальный бег → три раза в неделю по 20 минут в парке до работы.</p></div>
+  <div><h3>3. Модель S²R (Oxford, 2011/2017)</h3>
+   <ul><li><b>Cognitive</b> — как я работаю с информацией: запоминаю, разбираю, практикую.</li>
+   <li><b>Affective</b> — как я регулирую своё состояние: мотивацию, тревогу, усталость.</li>
+   <li><b>Sociocultural</b> — как я учусь через общение и культуру.</li></ul>
+   <p style="margin-top:8px"><b>Метастратегии</b> управляют всеми тремя: планирую, слежу, оцениваю. Всё вместе — <b>strategic self-regulation</b>, осознанное управление своим обучением.</p></div>
+  <div><h3>4. Цикл самостоятельного обучения</h3>
+   <div class="cycle"><b>Notice</b>→<b>Choose</b>→<b>Apply</b>→<b>Evaluate</b>→</div>
+   <p>Замечаю трудность → выбираю технику → пробую на практике → оцениваю и меняю. Пример: «не вспоминаю слова в речи» → retrieval practice → 10 минут три раза в неделю → через 2 недели проверяю, сколько слов вспоминаю.</p></div>
+  <div><h3>5. Чему вы научитесь делать сами</h3><ol id="skillList"></ol><p class="mute" style="margin-top:8px">Эти же 7 пунктов — шкала самооценки на вкладке «План и PDF».</p></div>
+  <div><h3>6. Что студент получит</h3><ul><li>Личный план (PDF): портрет, 3–4 техники с тактиками, план, самооценка.</li><li>Банк техник и тактик.</li><li>Банк материалов по уровню.</li></ul></div>
+ </div>
+ <details><summary>Справка для методиста: классификация Oxford 1990 (не показываем студенту)</summary>
+  <p style="margin-top:10px">Ранняя модель делила стратегии на прямые и непрямые. В 2011 году Р. Оксфорд пересмотрела её в пользу S²R: акцент сместился с общих стратегий на техники и тактики в контексте.</p>
+  <table><thead><tr><th>Группа</th><th>Категория</th><th>Назначение</th><th>Пример</th></tr></thead><tbody>
+  <tr><td>Прямые</td><td>Memory</td><td>Запоминание и воспроизведение</td><td>Ассоциации, группировка слов</td></tr>
+  <tr><td>Прямые</td><td>Cognitive</td><td>Обработка языкового материала</td><td>Анализ, практика, конспектирование</td></tr>
+  <tr><td>Прямые</td><td>Compensation</td><td>Преодоление пробелов в знаниях</td><td>Перефразирование, догадка по контексту</td></tr>
+  <tr><td>Непрямые</td><td>Metacognitive</td><td>Управление обучением</td><td>Планирование, мониторинг, оценка</td></tr>
+  <tr><td>Непрямые</td><td>Affective</td><td>Регуляция эмоций</td><td>Снижение тревожности</td></tr>
+  <tr><td>Непрямые</td><td>Social</td><td>Обучение через взаимодействие</td><td>Уточнение, сотрудничество</td></tr>
+  </tbody></table>
+ </details>
+</section>
+
+<!-- ===== 3. Подбор ===== -->
+<section class="tab" id="t3">
+ <h2>Подбор техник</h2>
+ <p class="mute">22–37 минут. Отметьте 3–4 техники. Для каждой запишите тактику: когда, на каком материале, сколько. 1–2 техники попробуйте со студентом прямо сейчас.</p>
+ <div class="pick">
+  <div>
+   <div id="sugg"></div>
+   <div class="filters">
+    <input type="text" id="fQ" placeholder="Поиск: название, проблема" aria-label="Поиск">
+    <select id="fArea" aria-label="Направление"><option value="">Все направления</option></select>
+    <select id="fS2R" aria-label="Измерение S²R"><option value="">Все измерения S²R</option><option value="C">Cognitive</option><option value="A">Affective</option><option value="S">Sociocultural</option><option value="M">Meta</option></select>
+    <label class="chip"><input type="checkbox" id="fLvl"> Подходит уровню студента</label>
+    <label class="chip"><input type="checkbox" id="fHint"> Только подсказанные</label>
+   </div>
+   <div class="mute" id="count"></div>
+   <div id="cards"></div>
+  </div>
+  <aside class="picked" id="picked"></aside>
+ </div>
+</section>
+
+<!-- ===== 4. План и PDF ===== -->
+<section class="tab" id="t4">
+ <div class="col">
+  <h2>План и выгрузка</h2>
+  <p class="mute">37–45 минут. Договоритесь о ритме и первом шаге, запишите самооценку, проверьте диаграмму и скачайте PDF.</p>
+  <h3>Диаграмма студента</h3>
+  <div class="vwrap"><div id="vennPrev"></div></div>
+  <label class="f" for="p_sum">Ситуация коротко <small>2–4 предложения для первой страницы PDF, обращение на «вы»</small></label><textarea id="p_sum" data-k="plan.summary"></textarea>
+
+  <h3>План</h3>
+  <label class="f" for="p_rh">Ритм на неделю <small>Например: «Пн, Ср, Пт по 15 минут утром + 5 минут карточек в метро»</small></label><textarea id="p_rh" data-k="plan.rhythm"></textarea>
+  <label class="f" for="p_first">Первый шаг — на этой неделе</label><input type="text" id="p_first" data-k="plan.first">
+  <label class="f" for="p_chk">Как поймём, что работает</label><textarea id="p_chk" data-k="plan.check"></textarea>
+  <label class="f" for="p_rev">Когда пересмотреть план</label><input type="date" id="p_rev" data-k="plan.review">
+
+  <h3>Самооценка: навыки самостоятельного обучения</h3>
+  <p class="mute">Спросите: «Насколько хорошо вы сейчас умеете…?» 1 — совсем не умею, 5 — уверенно делаю сам.</p>
+  <table class="skills stack"><thead><tr><th>Навык</th><th>Оценка</th></tr></thead><tbody id="skillRows"></tbody></table>
+
+  <h3>Материалы</h3>
+  <p class="mute">Банк материалов пока собирается. Добавьте вручную то, что посоветовали на встрече: попадёт в PDF.</p>
+  <div id="mats"></div>
+  <button id="addMat">+ Добавить материал</button>
+
+  <label class="f" for="p_bank">Ссылка на полный банк техник <small>Появится в конце PDF</small></label><input type="url" id="p_bank" data-k="plan.bank" placeholder="https://">
+
+  <div class="export">
+   <b>Выгрузка</b>
+   <div class="actions">
+    <button class="pri" id="pdfPlan">Скачать личный план (PDF)</button>
+    <button id="pdfBank">Скачать банк техник (PDF)</button>
+   </div>
+   <div id="msg" role="status" class="mute"></div>
+  </div>
+ </div>
+</section>
+</main>
+<div id="pdfroot" aria-hidden="true"></div>
+
+<script>
+const LEVELS=['A1','A2','B1','B2','C1','C2'];
+const AREAS={vocab:'Лексика · Vocabulary',grammar:'Грамматика · Grammar',listening:'Аудирование · Listening',reading:'Чтение · Reading',speaking:'Говорение · Speaking',writing:'Письмо · Writing',pron:'Произношение · Pronunciation',meta:'Управление обучением · Self-management',affect:'Состояние и мотивация · Affective',social:'Общение · Sociocultural'};
+const S2R={C:'Cognitive',A:'Affective',S:'Sociocultural',M:'Meta'};
+const S2R_RU={C:'как я работаю с информацией',A:'как я регулирую своё состояние',S:'как я учусь через общение',M:'как я управляю своим обучением'};
+
+/* lv: [от, до] индексы LEVELS; best: где техника работает лучше всего */
+const T=[
+/* ---------- VOCABULARY ---------- */
+{id:'retrieval',a:['vocab'],s:'C',lv:[0,5],best:'любой уровень',en:'Retrieval practice',ru:'Активное вспоминание',
+p:'Узнаю слова в тексте, но не могу вспомнить их, когда говорю.',
+e:'Вместо перечитывания списка — достать слово из памяти без подсказки и только потом проверить. Сама попытка вспомнить закрепляет слово сильнее, чем повторный просмотр.',
+st:['Возьми 5–10 слов или выражений из недавних занятий.','Закрой английский вариант: смотри только на значение, перевод или ситуацию.','Вспомни и произнеси или запиши слово.','Проверь себя; отметь то, что не вспомнилось.','Через 2–3 дня повтори — начни с невспомненных.'],
+t:'10 минут, 3–4 раза в неделю',ch:'Доля слов, вспомненных с первой попытки, растёт от раза к разу.',
+lo:'На A1–A2 вспоминай по картинке или переводу, а не по английскому определению.',pf:'Подглядывать в ответ через пару секунд. Дай себе время вспомнить — усилие и есть тренировка.'},
+
+{id:'spaced',a:['vocab'],s:'C',lv:[0,5],best:'любой уровень',en:'Spaced repetition',ru:'Интервальное повторение',
+p:'Выучил слова — через неделю ничего не помню.',
+e:'Повторять материал с растущими интервалами (через день, три дня, неделю, месяц), чтобы встречать слово как раз перед тем, как оно забудется. Удобно в приложениях-карточках или в бумажной системе коробок.',
+st:['Заведи колоду только из слов, которые тебе реально нужны.','На карточку пиши фразу-пример, а не одиночное слово.','Каждый день повторяй то, что приложение даёт «на сегодня».','Честно отмечай «не вспомнил».','Раз в неделю удаляй или исправляй неудачные карточки.'],
+t:'10–15 минут в день',ch:'Количество просроченных карточек не растёт, слова из колоды появляются в речи.',
+lo:'На A1–A2 — карточки с картинкой и озвучкой.',pf:'Добавлять по 50 карточек в день: через две недели повторение съест всё время.'},
+
+{id:'semantic',a:['vocab'],s:'C',lv:[1,4],best:'A2–B2',en:'Semantic grouping',ru:'Группировка по смыслу',
+p:'Слова в голове лежат кучей и путаются.',
+e:'Учить слова группами: по теме, ситуации, шкале (tiny → huge), синонимам и антонимам, словообразованию. Связанные слова поддерживают друг друга в памяти.',
+st:['Возьми список новых слов.','Разложи их на 3–5 групп по выбранному принципу.','Добавь в каждую группу 1–2 уже знакомых слова.','Оформи как mind map или таблицу.','Повторяй группой, а не по одному слову.'],
+t:'15 минут на подборку',ch:'За минуту можешь назвать 5+ слов на тему.',
+lo:'На A1 — простые темы (еда, дом, город) с картинками.',pf:'Учить вместе слова-«близнецы» (affect / effect): в одной группе они начинают путаться — разводи их.'},
+
+{id:'personal',a:['vocab'],s:'C',lv:[0,5],best:'любой уровень',en:'Personalisation',ru:'Привязка к себе',
+p:'Слова из учебника кажутся чужими и не запоминаются.',
+e:'Для каждого нового слова придумать правдивое предложение о своей жизни, работе, близких. Личная связь даёт памяти «крючок».',
+st:['Выбери 5 новых слов.','Для каждого напиши правдивое предложение о себе.','Прочитай предложения вслух.','Используй 1–2 из них в разговоре на этой неделе.'],
+t:'10 минут',ch:'Через неделю вспоминаешь слово через своё предложение.',
+lo:'На A1 — по шаблонам: I like…, My … is…, Every day I…',pf:'Абстрактные выдуманные примеры. Работает именно правда о себе.'},
+
+{id:'examples',a:['vocab'],s:'C',lv:[1,5],best:'B1+',en:'Creating example sentences',ru:'Свои примеры с сочетаемостью',
+p:'Знаю слово, но не знаю, с чем его употреблять, — получаются кальки с русского.',
+e:'Выяснить, с какими словами слово обычно сочетается (make a decision, heavy rain), и написать свои примеры по этому образцу.',
+st:['Найди слово в словаре с примерами (например, Cambridge или Oxford Learner’s).','Выпиши 2 типичных сочетания.','Напиши по ним 2–3 своих предложения.','Проверь в словаре или у ИИ, звучит ли естественно.'],
+t:'10–15 минут',ch:'В письме и речи меньше калек с русского.',
+lo:'На A2 — одно сочетание на слово.',pf:'Писать примеры, не проверив сочетаемость: закрепится ошибка.'},
+
+{id:'mining',a:['vocab'],s:'C',lv:[2,5],best:'B1+',en:'Vocabulary mining',ru:'Добыча лексики',
+p:'Смотрю и читаю много, а словарный запас не растёт.',
+e:'Целенаправленно «выкапывать» из интересного материала 5–10 полезных выражений — не все незнакомые слова — и переносить их в свою систему повторения.',
+st:['Выбери короткий материал по интересу.','При втором просмотре выпиши 5–10 выражений, которые хочешь использовать сам.','Запиши каждое с предложением-контекстом.','Добавь в карточки или список повторения.','Используй 2–3 выражения в речи или письме.'],
+t:'20 минут',ch:'Выражения из материалов появляются в твоей речи.',
+lo:'На A2 — 3–5 выражений из адаптированных материалов.',pf:'Выписывать всё подряд, включая редкие слова, которые не пригодятся.'},
+
+/* ---------- GRAMMAR ---------- */
+{id:'noticing',a:['grammar'],s:'C',lv:[1,5],best:'A2–C1',en:'Noticing',ru:'Замечание формы',
+p:'Правило знаю, а в речи всё равно ошибаюсь.',
+e:'При чтении и слушании специально замечать, как используется одна конкретная конструкция, и спрашивать себя «почему здесь так?». Незамеченная форма проходит мимо.',
+st:['Выбери одну конструкцию на неделю (например, Present Perfect).','В любых текстах и субтитрах выделяй её.','Выпиши 5 примеров с контекстом.','Отметь, что общего у этих ситуаций.'],
+t:'10–15 минут',ch:'Начинаешь замечать конструкцию без поиска и чаще используешь её сам.',
+lo:'На A2 — короткие адаптированные тексты.',pf:'Пытаться замечать всё сразу. Одна цель за раз.'},
+
+{id:'comparing',a:['grammar'],s:'C',lv:[1,4],best:'A2–B2',en:'Comparing examples',ru:'Сравнение примеров',
+p:'Путаю похожие конструкции (например, Past Simple и Present Perfect).',
+e:'Поставить рядом пары предложений, которые отличаются одной деталью, и сформулировать, в чём разница смысла.',
+st:['Найди 4–6 пар примеров (учебник, справочник, ИИ).','Для каждой пары ответь: чем отличается смысл?','Запиши разницу своими словами.','Сверь со справочником.'],
+t:'15 минут',ch:'Правильно выбираешь форму в упражнениях на выбор и в своей речи.',
+lo:'На A2 — пары с картинками или временными шкалами.',pf:'Сравнивать формулировки правил вместо ситуаций.'},
+
+{id:'inductive',a:['grammar'],s:'C',lv:[2,5],best:'B1+',en:'Inductive rule discovery',ru:'Вывести правило самому',
+p:'Правила из учебника не держатся в голове.',
+e:'Сначала посмотреть на 8–10 примеров, самому сформулировать правило и только потом сверить со справочником. Выведенное самостоятельно правило лучше понимается и запоминается.',
+st:['Собери 8–10 примеров конструкции.','Найди, что в них повторяется.','Запиши своё правило.','Сравни со справочником и поправь.','Придумай 3 своих примера.'],
+t:'20 минут',ch:'Можешь объяснить правило своими словами и привести пример.',
+lo:'На A1–A2 лучше делать вместе с преподавателем.',pf:'Не сверяться со справочником: можно вывести неверное правило.'},
+
+{id:'hypothesis',a:['grammar'],s:'C',lv:[2,5],best:'B1+',en:'Hypothesis testing',ru:'Проверка гипотез',
+p:'Не уверен, говорят так или нет.',
+e:'Когда сомневаешься в форме, сформулировать гипотезу («кажется, так можно») и проверить её: в словаре, поиском фразы в кавычках, в корпусе, у ИИ или преподавателя.',
+st:['Запиши фразу, в которой сомневаешься.','Сформулируй, что именно проверяешь.','Проверь в двух источниках.','Запиши результат в журнал находок или ошибок.'],
+t:'5 минут на фразу',ch:'В журнале копятся проверенные находки, повторяющихся сомнений меньше.',
+lo:'',pf:'Верить первому результату. Смотри, насколько вариант частотный и в каком контексте.'},
+
+{id:'selftest',a:['grammar'],s:'C',lv:[0,5],best:'любой уровень',en:'Self-testing',ru:'Самопроверка',
+p:'Думаю, что понял тему, а на практике не получается.',
+e:'Через некоторое время после изучения темы проверить себя без подсказок: перевести, заполнить пропуски, составить свои примеры — и только потом смотреть ответы.',
+st:['Через день после изучения темы возьми 10 заданий (учебник или сгенерированные ИИ).','Сделай без справочника.','Проверь; раздели ошибки на «не знал» и «невнимательность».','Повтори через неделю.'],
+t:'15 минут',ch:'Процент верных ответов при повторной проверке.',
+lo:'На A1 — короткие задания на выбор.',pf:'Проверять себя сразу после правила — это проверяет кратковременную память.'},
+
+{id:'corpus',a:['grammar','vocab'],s:'C',lv:[3,5],best:'B2+',en:'Corpus searches',ru:'Поиск в корпусе',
+p:'Хочу понять, как слово или конструкция реально употребляется.',
+e:'Смотреть десятки реальных примеров употребления в корпусах и сервисах (SkELL, YouGlish, Ludwig, COCA) и находить типичные шаблоны.',
+st:['Введи слово или конструкцию в корпус.','Посмотри 20–30 примеров.','Выпиши повторяющиеся шаблоны.','Используй один шаблон в своём тексте.'],
+t:'10–15 минут',ch:'Сам подбираешь естественную сочетаемость.',
+lo:'На B1 можно начинать со SkELL — там простые примеры.',pf:'Тонуть в данных. Ищи ответ на конкретный вопрос.'},
+
+/* ---------- LISTENING ---------- */
+{id:'prediction',a:['listening'],s:'C',lv:[1,5],best:'A2–B2',en:'Prediction',ru:'Прогнозирование',
+p:'Включаю аудио — и сразу теряюсь.',
+e:'До прослушивания предположить, о чём пойдёт речь и какие слова прозвучат, — по заголовку, картинке, ситуации. Подготовленный к теме мозг понимает больше.',
+st:['Прочитай заголовок или описание.','За минуту запиши 5–7 слов, которые, скорее всего, прозвучат.','Предположи 2–3 главные мысли.','Послушай и сверь.'],
+t:'+2 минуты к любому прослушиванию',ch:'С первого раза понимаешь больше.',
+lo:'На A2 мысли можно предсказывать по-русски, слова — по-английски.',pf:''},
+
+{id:'gist',a:['listening'],s:'C',lv:[1,5],best:'A2–B2',en:'Listening for gist and detail',ru:'Сначала общее, потом детали',
+p:'Пытаюсь понять каждое слово и быстро устаю.',
+e:'Слушать в два прохода с разными задачами: сначала общий смысл (о чём, кто, какое настроение), потом конкретные детали (цифры, имена, факты).',
+st:['Первый раз: ответь одним предложением, о чём это.','Запиши 2–3 вопроса о деталях.','Второй раз: найди ответы.','Проверь по транскрипту.'],
+t:'15–20 минут',ch:'После первого прослушивания можешь пересказать общую идею.',
+lo:'',pf:'Останавливать запись на каждом незнакомом слове в первом проходе.'},
+
+{id:'repeated',a:['listening'],s:'C',lv:[0,5],best:'A1–B2',en:'Repeated listening',ru:'Многократное прослушивание',
+p:'С одного раза понимаю мало — и бросаю.',
+e:'Слушать один короткий фрагмент 3–5 раз, каждый раз понимая больше, вместо того чтобы переключаться на новый.',
+st:['Выбери 2–4 минуты аудио.','Послушай без текста.','Послушай ещё раз и отметь, что добавилось.','Третий раз — с транскриптом.','Четвёртый — снова без текста.'],
+t:'20 минут',ch:'На последнем прослушивании понимаешь почти всё без текста.',
+lo:'На A1 — фрагменты по 30–60 секунд.',pf:'Брать длинный фрагмент.'},
+
+{id:'transcript',a:['listening'],s:'C',lv:[1,5],best:'A2–C1',en:'Transcript analysis',ru:'Разбор с транскриптом',
+p:'Читая — понимаю, на слух — нет.',
+e:'Сравнить услышанное с тем, что было сказано на самом деле: найти места, где слова «склеились» или прозвучали не так, как ожидалось.',
+st:['Послушай отрывок и отметь непонятные места по таймкоду.','Прочитай транскрипт этих мест.','Переслушай, глядя в текст.','Выпиши «ловушки» — сокращения, слияния, редукции.'],
+t:'15–20 минут',ch:'Узнаёшь те же ловушки в новых аудио.',
+lo:'',pf:'Читать транскрипт сразу, не попытавшись понять на слух.'},
+
+{id:'focused',a:['listening'],s:'C',lv:[2,5],best:'B1+',en:'Focused listening',ru:'Слушать с фокусом',
+p:'Слушаю много, но не замечаю ничего конкретного.',
+e:'Слушать с одной узкой задачей: найти все слова-связки, все формы прошедшего времени, как вежливо говорят «нет» и т. п.',
+st:['Выбери фокус.','Слушай и записывай только это.','Сверь с транскриптом.','Используй найденное в своей речи.'],
+t:'10–15 минут',ch:'Находки из фокусного слушания появляются в твоей речи.',
+lo:'',pf:'Слишком широкий фокус («всё про грамматику»).'},
+
+{id:'dictation',a:['listening','pron'],s:'C',lv:[0,4],best:'A1–B2',en:'Dictation',ru:'Диктант',
+p:'Не различаю слова в потоке речи.',
+e:'Записывать на слух короткие фрагменты дословно и сверять с оригиналом. Показывает, какие звуки и слова ты не слышишь.',
+st:['Выбери 1–2 минуты аудио с транскриптом.','Слушай по фразе, ставь на паузу, записывай.','Проверь по транскрипту.','Разбери ошибки: не знал слово / не расслышал / не так написал.'],
+t:'15–20 минут',ch:'Доля ошибок в диктанте снижается.',
+lo:'На A1 — очень медленные учебные записи.',pf:'Брать фрагмент без транскрипта — нечем проверить.'},
+
+/* ---------- READING ---------- */
+{id:'skimming',a:['reading'],s:'C',lv:[1,5],best:'A2+',en:'Skimming',ru:'Просмотровое чтение',
+p:'Читаю медленно, каждую строчку подряд.',
+e:'Быстро пробежать текст, чтобы понять общую идею: заголовки, первые предложения абзацев, выделения.',
+st:['Дай себе 1–2 минуты на текст.','Прочитай заголовок, первые и последние предложения абзацев.','Сформулируй главную мысль.','Реши, нужно ли читать подробно.'],
+t:'2–5 минут',ch:'Главная мысль после просмотра совпадает с той, что после полного чтения.',
+lo:'',pf:'Останавливаться на незнакомых словах.'},
+
+{id:'scanning',a:['reading'],s:'C',lv:[0,5],best:'любой уровень',en:'Scanning',ru:'Поиск информации',
+p:'Нужно найти что-то конкретное, а я читаю весь текст.',
+e:'Искать в тексте конкретную информацию — дату, имя, цифру, ответ на вопрос, — не читая остальное.',
+st:['Сформулируй, что ищешь.','Подумай, как это может выглядеть (цифра, имя с заглавной буквы).','Пробеги текст глазами.','Подробно прочитай только найденное место.'],
+t:'2–5 минут',ch:'Находишь нужное быстрее, чем раньше.',
+lo:'На A1 — расписания, меню, объявления.',pf:''},
+
+{id:'inferencing',a:['reading','vocab'],s:'C',lv:[1,5],best:'A2+',en:'Inferencing',ru:'Догадка по контексту',
+p:'Встречаю незнакомое слово — и сразу лезу в словарь или застреваю.',
+e:'Угадывать значение незнакомого слова по контексту, частям слова и логике текста, а словарь использовать для проверки.',
+st:['Подчеркни незнакомое слово.','Определи часть речи.','Посмотри на соседние предложения, приставки и суффиксы.','Предположи значение.','Проверь в словаре, только если слово важно.'],
+t:'В процессе чтения',ch:'Догадки всё чаще совпадают со словарём.',
+lo:'',pf:''},
+
+{id:'summarising',a:['reading'],s:'C',lv:[1,5],best:'A2+',en:'Summarising',ru:'Краткий пересказ',
+p:'Прочитал, а через час не могу сказать, о чём это было.',
+e:'После чтения сформулировать главное в 2–3 предложениях своими словами — устно или письменно.',
+st:['Прочитай текст.','Закрой его.','Запиши 2–3 предложения: о чём текст, главная мысль, что важно лично тебе.','Сравни с текстом.'],
+t:'5–10 минут',ch:'Пересказ точный и своими словами.',
+lo:'На A2 — 1–2 простых предложения или по плану «кто / что / где».',pf:'Переписывать фразы из текста.'},
+
+{id:'lookup',a:['reading','vocab'],s:'C',lv:[1,5],best:'A2+',en:'Selective vocabulary lookup',ru:'Выборочный поиск слов',
+p:'Смотрю в словаре каждое слово — чтение превращается в мучение.',
+e:'Искать только слова, без которых непонятен смысл или которые встречаются повторно; остальные пропускать или угадывать.',
+st:['При первом чтении только подчёркивай.','После абзаца выбери максимум 3–5 ключевых слов.','Посмотри только их.','Полезные перенеси в карточки.'],
+t:'В процессе чтения',ch:'Читаешь быстрее, понимание не страдает.',
+lo:'',pf:''},
+
+{id:'extensive',a:['reading'],s:'C',lv:[0,5],best:'любой уровень',en:'Extensive reading',ru:'Чтение для удовольствия',
+p:'Читаю только учебные тексты, на «настоящие» не решаюсь.',
+e:'Много читать лёгкого и интересного (понятно почти всё — 95–98% слов), не останавливаясь, ради сюжета или информации. Объём даёт автоматизм и словарный запас.',
+st:['Выбери уровень, где почти всё понятно: адаптированные книги, комиксы, блоги.','Читай 15–20 минут каждый день.','Не пользуйся словарём, кроме ключевых слов.','Бросай неинтересное без сожаления.'],
+t:'15–20 минут в день',ch:'Количество прочитанных страниц в месяц; скорость чтения растёт.',
+lo:'На A1–A2 — адаптированные книги (graded readers) начальных уровней.',pf:'Брать слишком сложную книгу «на вырост».'},
+
+/* ---------- SPEAKING ---------- */
+{id:'selfrec',a:['speaking','pron'],s:'C',lv:[0,5],best:'любой уровень',en:'Self-recording',ru:'Запись себя',
+p:'Не понимаю, как я звучу и какие ошибки делаю.',
+e:'Записывать свою речь, слушать и анализировать: ошибки, паузы, произношение. Сравнивать записи во времени.',
+st:['Выбери тему на 1–2 минуты.','Запишись без подготовки.','Прослушай и отметь 2–3 проблемы.','Запишись ещё раз, исправив их.','Сохрани запись, чтобы сравнить через месяц.'],
+t:'10–15 минут',ch:'Сравнение записи сейчас и через месяц.',
+lo:'На A1 — 30 секунд о себе по плану.',pf:'Только критиковать себя. Фиксируй и то, что стало лучше.'},
+
+{id:'monologues',a:['speaking'],s:'C',lv:[1,5],best:'A2+',en:'Monologues',ru:'Монологи',
+p:'Говорю только на уроке — практики мало.',
+e:'Говорить вслух самому с собой: комментировать свои действия, рассказывать о дне, отвечать на вопросы с карточек. Много практики без собеседника.',
+st:['Выбери ситуацию (дорога, готовка, прогулка).','2–5 минут говори вслух, что делаешь или думаешь.','Запомни слова, которых не хватило.','Найди их и повтори монолог.'],
+t:'5–10 минут в день',ch:'Меньше пауз в поиске слов, монолог длиннее.',
+lo:'На A2 — описывать то, что видишь, простыми фразами.',pf:'Застревать на поиске идеального слова — обходи его (см. Circumlocution).'},
+
+{id:'retelling',a:['speaking'],s:'C',lv:[0,5],best:'любой уровень',en:'Retelling',ru:'Пересказ',
+p:'Понимаю тексты, но не могу говорить связно.',
+e:'Пересказывать прочитанное или услышанное своими словами, используя новые выражения из источника.',
+st:['Возьми короткий текст или видео.','Выпиши 5–7 ключевых выражений.','Перескажи вслух с опорой на них.','Перескажи ещё раз без опоры.','Запишись.'],
+t:'10–15 минут',ch:'Пересказ без опоры с новыми выражениями.',
+lo:'На A1 — по картинкам и плану.',pf:'Заучивать текст наизусть вместо пересказа.'},
+
+{id:'circumlocution',a:['speaking'],s:'C',lv:[1,5],best:'A2–B2',en:'Circumlocution',ru:'Объяснение обходным путём',
+p:'Забываю слово — и замолкаю.',
+e:'Если нужного слова нет, описать его другими словами: the thing you use to…, a kind of…, the opposite of… Разговор не останавливается.',
+st:['Выучи 5–6 шаблонных фраз для описания.','Тренируйся: возьми слово и опиши его, не называя.','В разговоре сознательно используй описание вместо паузы.'],
+t:'5–10 минут',ch:'Меньше пауз и переходов на русский.',
+lo:'На A2 — шаблоны it’s like…, it’s for…, it’s a person who…',pf:''},
+
+{id:'shadowing',a:['speaking','pron'],s:'C',lv:[1,5],best:'A2+',en:'Shadowing',ru:'Шэдоуинг',
+p:'Произношение и интонация «русские», речь звучит неестественно.',
+e:'Повторять за диктором вслух почти одновременно, копируя звуки, ритм, интонацию и паузы.',
+st:['Выбери 30–60 секунд аудио с транскриптом.','Послушай и прочитай.','Повторяй за диктором, глядя в текст.','Повторяй без текста, отставая на полсекунды.','Запишись и сравни с оригиналом.'],
+t:'10 минут',ch:'Сравнение своей записи с оригиналом.',
+lo:'На A2 — медленные учебные записи.',pf:'Слишком быстрый или длинный фрагмент.'},
+
+{id:'airoleplay',a:['speaking'],s:'C',lv:[1,5],best:'B1+',en:'AI role-play',ru:'Ролевая игра с ИИ',
+p:'Не с кем разговаривать, а при людях страшно ошибаться.',
+e:'Разыгрывать ситуации (собеседование, звонок, small talk) с ИИ-собеседником голосом или текстом, а затем просить обратную связь.',
+st:['Опиши ИИ роль, ситуацию и свой уровень.','Попроси задавать вопросы по одному и говорить просто.','Проведи диалог 5–10 минут.','Попроси список ошибок и 3 улучшения.','Повтори диалог.'],
+t:'15 минут',ch:'Повторный диалог звучит увереннее и точнее.',
+lo:'На A2 — попроси ИИ говорить очень просто и короткими фразами.',pf:'Принимать всё, что говорит ИИ, за истину. Сомнительное проверяй.'},
+
+{id:'selfeval',a:['speaking'],s:'M',lv:[2,5],best:'B1+',en:'Self-evaluation',ru:'Самооценка речи по критериям',
+p:'Не понимаю, стал ли говорить лучше.',
+e:'Оценивать свою речь по 3–4 понятным критериям (беглость, точность, лексика, произношение) и выбирать одну цель на следующий раз.',
+st:['Возьми запись своей речи.','Оцени по каждому критерию от 1 до 5.','Выбери один критерий для улучшения.','Через неделю повтори.'],
+t:'10 минут в неделю',ch:'Оценки за месяц.',
+lo:'',pf:'Ставить сразу много целей.'},
+
+/* ---------- WRITING ---------- */
+{id:'freewriting',a:['writing'],s:'C',lv:[1,5],best:'A2+',en:'Freewriting',ru:'Свободное письмо',
+p:'Боюсь начать писать — «белый лист».',
+e:'Писать без остановки 5–10 минут на тему, не исправляя ошибок и не подбирая слов. Снимает страх и развивает беглость.',
+st:['Поставь таймер.','Пиши всё, что приходит в голову по теме.','Не останавливайся и не стирай.','После — подчеркни удачные фразы и места, где не хватило слов.'],
+t:'10 минут',ch:'За то же время пишешь больше.',
+lo:'На A2 — 5 минут, простые предложения.',pf:'Исправлять в процессе.'},
+
+{id:'outlining',a:['writing'],s:'C',lv:[1,5],best:'A2+',en:'Outlining',ru:'План текста',
+p:'Тексты получаются сумбурными.',
+e:'Перед письмом набросать структуру: главная мысль, 2–3 пункта, вывод — и подобрать нужные связки и выражения.',
+st:['Запиши главную мысль одной фразой.','Набросай 2–3 пункта.','К каждому — пример или аргумент.','Подбери связки (firstly, however, as a result).','Пиши по плану.'],
+t:'5–10 минут перед письмом',ch:'Текст легко пересказать по абзацам.',
+lo:'',pf:''},
+
+{id:'drafting',a:['writing'],s:'C',lv:[2,5],best:'B1+',en:'Drafting and revising',ru:'Черновик и доработка',
+p:'Пишу один раз и сразу отправляю.',
+e:'Разделить письмо на этапы: сначала черновик ради смысла, потом отдельный проход на структуру и ясность.',
+st:['Быстро напиши черновик.','Отложи хотя бы на час.','Перечитай: понятна ли мысль, логичен ли порядок.','Перестрой, убери лишнее, добавь связки.'],
+t:'+10–20 минут к тексту',ch:'Вторая версия короче и понятнее первой.',
+lo:'',pf:'Путать с вычиткой ошибок — это следующий, отдельный шаг.'},
+
+{id:'selfedit',a:['writing'],s:'M',lv:[1,5],best:'A2+',en:'Self-editing',ru:'Самостоятельная вычитка',
+p:'Делаю ошибки, которые на самом деле знаю.',
+e:'Проверять текст по своему чек-листу типичных ошибок — отдельным проходом на каждую (артикли, времена, порядок слов).',
+st:['Составь чек-лист из 3–5 своих типичных ошибок.','Читай текст, проверяя по одному пункту за проход.','Исправь найденное.','Отметь, что нашёл сам.'],
+t:'10 минут',ch:'Меньше пометок от преподавателя.',
+lo:'',pf:''},
+
+{id:'errorlog',a:['writing','grammar'],s:'M',lv:[1,5],best:'A2+',en:'Error log',ru:'Журнал ошибок',
+p:'Повторяю одни и те же ошибки.',
+e:'Вести таблицу своих ошибок — как было, как правильно, почему — и регулярно себя по ней проверять.',
+st:['Заведи таблицу: было / правильно / правило.','После каждой проверки добавляй 2–3 ошибки.','Раз в неделю закрывай правую колонку и исправляй сам.','Ушедшие ошибки вычёркивай.'],
+t:'10 минут в неделю',ch:'Какие ошибки исчезли за месяц.',
+lo:'',pf:'Записывать всё подряд. Только повторяющиеся ошибки.'},
+
+{id:'aifeedback',a:['writing'],s:'C',lv:[1,5],best:'B1+',en:'AI-assisted feedback',ru:'Обратная связь от ИИ',
+p:'Некому проверить мои тексты.',
+e:'Просить ИИ не переписывать текст, а показать ошибки с объяснением — чтобы исправить их самому.',
+st:['Сначала проверь текст сам.','Попроси ИИ: «отметь ошибки и объясни, но не исправляй».','Исправь сам.','Попроси проверить исправления.','Повторяющиеся ошибки занеси в журнал.'],
+t:'15 минут',ch:'С каждым текстом ИИ находит меньше ошибок.',
+lo:'На A2 — проси объяснения на русском.',pf:'Копировать исправленный ИИ текст: так ничего не запоминается.'},
+
+/* ---------- PRONUNCIATION ---------- */
+{id:'minpairs',a:['pron'],s:'C',lv:[0,4],best:'A1–B2',en:'Minimal pair practice',ru:'Минимальные пары',
+p:'Не слышу и не произношу разницу: ship / sheep, bad / bed.',
+e:'Тренировать пары слов, которые отличаются одним звуком: сначала различать на слух, потом произносить.',
+st:['Выбери одну проблемную пару звуков.','Найди 10 пар слов.','Слушай и угадывай, какое слово звучит.','Произнеси, запишись, сравни.','Используй слова в коротких фразах.'],
+t:'10 минут',ch:'На слух угадываешь 9 из 10.',
+lo:'',pf:'Работать с несколькими звуками сразу.'},
+
+{id:'phonemic',a:['pron'],s:'C',lv:[1,5],best:'A2+',en:'Phonemic transcription',ru:'Транскрипция',
+p:'Не знаю, как читается новое слово.',
+e:'Читать транскрипцию и ударение в словаре, чтобы знать правильное произношение, а не угадывать по написанию.',
+st:['Выучи значки звуков, которых нет в русском.','Для каждого нового слова смотри транскрипцию и ударение.','Слушай аудио в словаре.','Помечай ударение в своих карточках.'],
+t:'5 минут на подборку слов',ch:'Новые слова произносишь правильно с первого раза.',
+lo:'На A1–A2 достаточно слушать озвучку и отмечать ударение.',pf:''},
+
+{id:'targeted',a:['pron'],s:'C',lv:[1,5],best:'A2+',en:'Targeted pronunciation practice',ru:'Точечная работа над звуком',
+p:'Знаю, какой звук не получается, но не знаю, что с этим делать.',
+e:'Выбрать 1–2 проблемных звука или явления (th, w/v, ударение, интонация вопросов) и тренировать их отдельно короткими упражнениями.',
+st:['Определи проблему — с преподавателем или по своей записи.','Посмотри видео о том, как ставится звук.','Тренируй: слова → фразы → речь.','Записывай себя раз в неделю.'],
+t:'5–10 минут в день',ch:'Сравнение записей неделя к неделе.',
+lo:'',pf:''},
+
+/* ---------- SELF-MANAGEMENT (META) ---------- */
+{id:'goal',a:['meta'],s:'M',lv:[0,5],best:'любой уровень',en:'Goal setting',ru:'Постановка цели',
+p:'Хочу «подтянуть английский», но непонятно, что именно делать.',
+e:'Превратить общее желание в конкретную проверяемую цель со сроком: что именно я смогу сделать и к какому времени. Например: «Через два месяца смогу 10 минут рассказать о своей работе на созвоне без подготовки».',
+st:['Ответь себе: зачем мне английский сейчас?','Сформулируй цель на 1–3 месяца в виде «смогу…».','Определи, как поймёшь, что цель достигнута.','Разбей цель на шаги на неделю.'],
+t:'20 минут один раз, пересмотр раз в месяц',ch:'Цель проходит тест «могу ли я это проверить?».',
+lo:'Можно формулировать по-русски.',pf:'Цель-процесс («заниматься больше») вместо цели-результата.'},
+
+{id:'weekly',a:['meta'],s:'M',lv:[0,5],best:'любой уровень',en:'Weekly planning',ru:'План на неделю',
+p:'Занимаюсь, когда вспоминаю: то густо, то пусто.',
+e:'Раз в неделю 10 минут планировать, когда, сколько и чем заниматься, — привязывая занятия к конкретным слотам в расписании.',
+st:['В конце недели открой календарь.','Выбери 3–5 слотов на следующую неделю.','Каждому слоту дай конкретное действие (не «английский», а «10 минут карточек + 1 подкаст»).','В конце недели отметь, что получилось.'],
+t:'10 минут в неделю',ch:'Сколько запланированных слотов выполнено.',
+lo:'',pf:'Планировать идеальную неделю. Планируй реалистичную.'},
+
+{id:'journal',a:['meta'],s:'M',lv:[0,5],best:'любой уровень',en:'Learning journal',ru:'Дневник обучения',
+p:'Не помню, что делал, и не вижу прогресса.',
+e:'Коротко записывать после занятий: что делал, что было трудно, что попробую дальше. Это цикл Notice → Choose → Apply → Evaluate на практике.',
+st:['После занятия — три строки: сделал / было трудно / дальше.','Раз в неделю перечитывай записи.','Выбери одну корректировку на следующую неделю.'],
+t:'3 минуты после занятия',ch:'Видно, какие трудности ушли за месяц.',
+lo:'Можно вести по-русски.',pf:''},
+
+{id:'benchmark',a:['meta'],s:'M',lv:[0,5],best:'любой уровень',en:'Progress benchmarking',ru:'Контрольные замеры',
+p:'Кажется, я топчусь на месте.',
+e:'Раз в 4–6 недель делать одинаковый «замер» и сравнивать: монолог на ту же тему, текст того же уровня, короткий тест.',
+st:['Выбери 1–2 замера под свою цель.','Сделай первый и сохрани результат.','Повтори через месяц в тех же условиях.','Сравни и обсуди с преподавателем.'],
+t:'15 минут раз в месяц',ch:'Это и есть проверка.',
+lo:'',pf:'Менять условия замера — тогда сравнивать нечего.'},
+
+{id:'resources',a:['meta'],s:'M',lv:[0,5],best:'любой уровень',en:'Resource review',ru:'Ревизия ресурсов',
+p:'Пробую много приложений и каналов — и всё бросаю.',
+e:'Оценить свои ресурсы: что работает на цель, что просто приятно, от чего пора отказаться. Оставить 2–4 основных.',
+st:['Выпиши все ресурсы, которыми пользуешься.','Для каждого: какой навык тренирует, сколько времени занимает, есть ли польза.','Оставь лучшие 2–4.','Раз в месяц пересматривай список.'],
+t:'20 минут раз в месяц',ch:'На каждый ресурс тратится время, и по нему видно продвижение.',
+lo:'',pf:''},
+
+/* ---------- AFFECTIVE ---------- */
+{id:'micro',a:['affect'],s:'A',lv:[0,5],best:'любой уровень',en:'Micro-sessions',ru:'Мини-занятия',
+p:'Нет времени — значит, сегодня не занимаюсь.',
+e:'Заниматься блоками по 5–10 минут в «мёртвое» время (дорога, очередь). Маленький шаг легче начать, а регулярность важнее длительности.',
+st:['Составь список дел на 5 минут: карточки, фрагмент подкаста, монолог.','Привяжи их к ситуациям дня.','Есть силы — продолжай; нет — 5 минут засчитаны.'],
+t:'5–10 минут, несколько раз в день',ch:'Количество дней с занятиями в неделю.',
+lo:'',pf:''},
+
+{id:'habit',a:['affect','meta'],s:'A',lv:[0,5],best:'любой уровень',en:'Habit stacking and tracking',ru:'Привязка к привычке и трекер',
+p:'Начинаю с энтузиазмом, через две недели бросаю.',
+e:'Привязать английский к уже существующей привычке («после утреннего кофе — 10 карточек») и отмечать выполненные дни в трекере. Видимая «цепочка» мотивирует не прерываться.',
+st:['Выбери якорь — действие, которое делаешь каждый день.','Сформулируй: «после X я делаю Y».','Отмечай выполнение в трекере.','Пропустил день — не пропускай второй подряд.'],
+t:'2 минуты на отметку',ch:'Длина цепочки в трекере.',
+lo:'',pf:'Слишком большое действие для привычки. Начни с 5 минут.'},
+
+{id:'reframe',a:['affect'],s:'A',lv:[0,5],best:'любой уровень',en:'Reframing mistakes',ru:'Новое отношение к ошибкам',
+p:'Боюсь ошибиться — поэтому молчу.',
+e:'Осознанно менять отношение к ошибкам: ошибка — это информация о том, что тренировать дальше. Цель разговора — донести мысль, а не сказать без ошибок.',
+st:['Замечай мысль «я скажу неправильно».','Переформулируй: «ошибусь — узнаю, что подтянуть».','Ставь цель «донести мысль», а не «без ошибок».','После разговора запиши, что получилось.'],
+t:'В каждом разговоре',ch:'Чаще вступаешь в разговор первым.',
+lo:'',pf:''},
+
+{id:'rehearsal',a:['affect','speaking'],s:'A',lv:[1,5],best:'A2+',en:'Rehearsal',ru:'Репетиция перед важным разговором',
+p:'Волнуюсь перед созвоном или собеседованием и всё забываю.',
+e:'Заранее подготовить и проговорить вслух ключевые фразы и сценарии, чтобы снизить тревогу и освободить внимание.',
+st:['Выпиши 3–5 ситуаций предстоящего разговора.','Подготовь фразы для каждой, включая «спасательные» (Could you repeat that?).','Проговори вслух или отрепетируй с ИИ.','Перед разговором 2 минуты повтори ключевые фразы.'],
+t:'15–20 минут перед событием',ch:'Ощущение контроля в разговоре (оцени 1–5).',
+lo:'',pf:''},
+
+/* ---------- SOCIOCULTURAL ---------- */
+{id:'exchange',a:['social','speaking'],s:'S',lv:[1,5],best:'B1+',en:'Language exchange',ru:'Языковой партнёр',
+p:'Нет живого общения вне уроков.',
+e:'Регулярно общаться с носителем или другим изучающим: тандем (часть времени на английском, часть помогаешь с русским) или разговорный клуб.',
+st:['Найди партнёра или клуб.','Договорись о формате и регулярности.','Готовь к встрече 2–3 темы.','После встречи запиши новые выражения.'],
+t:'30–60 минут в неделю',ch:'Регулярность встреч; разговор держится дольше без пауз.',
+lo:'На A2 — разговорные клубы для начинающих.',pf:''},
+
+{id:'clarify',a:['social','speaking','listening'],s:'S',lv:[0,5],best:'любой уровень',en:'Asking for clarification',ru:'Переспрашивать и уточнять',
+p:'Если не понял — киваю и делаю вид, что понял.',
+e:'Использовать фразы для переспроса и уточнения, чтобы управлять разговором и учиться прямо в нём.',
+st:['Выучи 5–6 фраз: Sorry, could you say that again? What do you mean by…? So you mean…?','Используй хотя бы одну в каждом разговоре.','Отмечай, что узнал благодаря вопросу.'],
+t:'В каждом разговоре',ch:'Реже теряешь нить разговора.',
+lo:'На A1 — Sorry? / Again, please? / Slowly, please.',pf:''},
+
+{id:'communities',a:['social'],s:'S',lv:[2,5],best:'B1+',en:'Online communities',ru:'Сообщества по интересам',
+p:'Английский никак не связан с моими интересами.',
+e:'Участвовать в англоязычных сообществах по хобби или профессии: форумы, Reddit, Discord, комментарии на YouTube. Язык становится инструментом, а не предметом.',
+st:['Найди 1–2 сообщества по своему интересу.','Неделю просто читай.','Начни с коротких комментариев и вопросов.','Выписывай типичные выражения сообщества.'],
+t:'10–15 минут в день',ch:'Пишешь комментарии без черновика по-русски.',
+lo:'',pf:''},
+
+{id:'pragmatics',a:['social'],s:'S',lv:[2,5],best:'B1+',en:'Pragmatic noticing',ru:'Наблюдение за речевым поведением',
+p:'Говорю грамматически правильно, но звучу резко или странно.',
+e:'Наблюдать, как носители просят, отказывают, спорят, благодарят в разных ситуациях, и замечать разницу с русскими нормами (вежливость, прямота, small talk).',
+st:['Выбери речевое действие (просьба, отказ, несогласие).','Собери 5–10 примеров из сериалов, писем, подкастов.','Сравни с тем, как сказал бы по-русски.','Попробуй найденные формулы в своей речи и письмах.'],
+t:'15 минут',ch:'Собеседники реагируют так, как ты ожидаешь.',
+lo:'',pf:''}
+];
+
+/* Подсказки по трудностям: трудность → техники */
+const DIFF=[
+['d1','Узнаю слова, но не вспоминаю их в речи',['retrieval','personal','monologues','spaced']],
+['d2','Быстро забываю выученные слова',['spaced','retrieval','semantic']],
+['d3','Не знаю, с чем сочетается слово, получаются кальки',['examples','corpus','mining']],
+['d4','Много смотрю и читаю, а словарный запас не растёт',['mining','extensive','spaced']],
+['d5','Знаю правило, но ошибаюсь в речи',['noticing','selftest','errorlog']],
+['d6','Путаю похожие грамматические конструкции',['comparing','inductive','hypothesis']],
+['d7','Не понимаю быструю живую речь',['transcript','dictation','repeated','shadowing']],
+['d8','Теряюсь, если понимаю не всё',['prediction','gist','repeated']],
+['d9','Читаю медленно, со словарём на каждом слове',['skimming','inferencing','lookup','extensive']],
+['d10','Прочитал — и не помню, о чём',['summarising','retelling']],
+['d11','Забываю слово — и замолкаю',['circumlocution','clarify','retrieval']],
+['d12','Мало разговорной практики',['monologues','airoleplay','exchange']],
+['d13','Боюсь говорить, боюсь ошибок',['reframe','rehearsal','airoleplay','monologues']],
+['d14','Не понимаю, как звучу и есть ли прогресс в речи',['selfrec','selfeval','benchmark']],
+['d15','Проблемы с произношением и интонацией',['shadowing','minpairs','targeted','phonemic']],
+['d16','Страшно начинать писать, тексты сумбурные',['freewriting','outlining','drafting']],
+['d17','Повторяю одни и те же ошибки',['errorlog','selfedit','aifeedback']],
+['d18','Некому проверить письменные работы',['aifeedback','selfedit']],
+['d19','Нет системы, занимаюсь урывками',['weekly','habit','micro','goal']],
+['d20','Нет времени',['micro','habit','weekly']],
+['d21','Начинаю и бросаю, падает мотивация',['habit','goal','journal','communities']],
+['d22','Цель размыта («подтянуть английский»)',['goal','benchmark']],
+['d23','Много ресурсов, всё бросаю',['resources','goal']],
+['d24','Не вижу прогресса',['benchmark','journal','selfeval']],
+['d25','Звучу неестественно или резко в общении',['pragmatics','shadowing','exchange']],
+['d26','Не переспрашиваю, делаю вид, что понял',['clarify','rehearsal']],
+['d27','Английский оторван от моих интересов',['communities','extensive','mining']]
+];
+
+/* Что студент учится делать самостоятельно — шкала самооценки */
+const SKILLS=['Замечать собственные трудности','Формулировать конкретные учебные цели','Выделять время и организовывать занятия','Следовать выбранному плану','Комбинировать разные способы работы','Проверять понимание и результаты','Оценивать эффективность и корректировать план'];
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nl=v=>esc(v).replace(/\n/g,'<br>');
+const byId=Object.fromEntries(T.map(t=>[t.id,t]));
+const KEY='hs-consult-v1';
+const PREFS=['Читать','Смотреть видео','Слушать подкасты','Писать','Говорить','Приложения и игры','Заниматься одному','Заниматься с людьми'];
+const WHEN=['Утро','Дорога','Обед','Вечер','Выходные'];
+const NOWQ=[['M','Как вы решаете, чем заниматься: повторять слова, смотреть видео, читать статью?'],['C','Что вы делаете, когда встречаете новое слово? Как возвращаетесь к нему позже?'],['C','Что делаете, если не понимаете грамматическую конструкцию?'],['A','Как работаете с видео, если понимаете только половину?'],['C','Что делаете, когда не можете вспомнить нужное слово?'],['M','Как понимаете, что стали лучше владеть английским?'],['M','Как решаете, продолжать ли пользоваться ресурсом или подходом?'],['A','Какие виды самостоятельной работы нравятся, а какие хочется отложить?'],['S','С кем и где вы общаетесь на английском вне занятий?']];
+const blank=()=>({info:{date:new Date().toISOString().slice(0,10)},c1:{},c2:{},c3:{},venn:{},now:{},diff:[],prefs:[],when:[],picked:[],notes:{},plan:{},skills:{},mats:[]});
+let S=blank();
+const load=()=>{try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(blank(),JSON.parse(r))}catch(e){}};
+let saveT;const save=()=>{clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},250)};
+const getP=p=>p.split('.').reduce((o,k)=>o?.[k],S);
+const setP=(p,v)=>{const ks=p.split('.');let o=S;ks.slice(0,-1).forEach(k=>o=o[k]??=({}));o[ks.at(-1)]=v};
+
+/* ---------- static renders ---------- */
+const chipList=(arr,key)=>arr.map((x,i)=>{const v=Array.isArray(x)?x[0]:x,l=Array.isArray(x)?x[1]:x;return `<label class="chip"><input type="checkbox" data-arr="${key}" value="${esc(v)}"> ${esc(l)}</label>`}).join('');
+$('#diffChips').innerHTML=chipList(DIFF.map(d=>[d[0],d[1]]),'diff');
+$('#prefChips').innerHTML=chipList(PREFS,'prefs');
+$('#whenChips').innerHTML=chipList(WHEN,'when');
+$('#nowQs').innerHTML=NOWQ.map((q,i)=>`<div class="q"><label class="f" for="nq${i}">${esc(q[1])}<span class="tag">${S2R[q[0]]}</span></label><textarea id="nq${i}" data-k="now.q${i}"></textarea></div>`).join('');
+$('#skillList').innerHTML=SKILLS.map(s=>`<li>${esc(s)}</li>`).join('');
+$('#skillRows').innerHTML=SKILLS.map((s,i)=>`<tr><td>${esc(s)}</td><td><div class="scale" role="radiogroup" aria-label="${esc(s)}">${[1,2,3,4,5].map(n=>`<label><input type="radio" name="sk${i}" value="${n}" data-skill="${i}">${n}</label>`).join('')}</div></td></tr>`).join('');
+$('#fArea').innerHTML+=Object.entries(AREAS).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('');
+
+/* ---------- bind inputs ---------- */
+const fill=()=>{
+ $$('[data-k]').forEach(el=>{el.value=getP(el.dataset.k)??''});
+ $$('[data-arr]').forEach(el=>{el.checked=(S[el.dataset.arr]||[]).includes(el.value)});
+ $$('[data-skill]').forEach(el=>{el.checked=String(S.skills[el.dataset.skill]??'')===el.value});
+ renderMats();renderCards();renderPicked();renderVenn();
+};
+document.addEventListener('input',e=>{
+ const el=e.target;
+ if(el.dataset.k){setP(el.dataset.k,el.value);save();if(/^venn|^info\.level/.test(el.dataset.k)){renderVenn();if(el.dataset.k==='info.level')renderCards()}}
+});
+document.addEventListener('change',e=>{
+ const el=e.target;
+ if(el.dataset.arr){const a=new Set(S[el.dataset.arr]||[]);el.checked?a.add(el.value):a.delete(el.value);S[el.dataset.arr]=[...a];save();if(el.dataset.arr==='diff')renderCards()}
+ if(el.dataset.skill!==undefined){S.skills[el.dataset.skill]=+el.value;save()}
+ if(el.dataset.k&&el.tagName==='SELECT'){setP(el.dataset.k,el.value);save();renderCards();renderVenn()}
+});
+
+/* ---------- tabs ---------- */
+const showTab=id=>{$$('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));$$('section.tab').forEach(s=>s.classList.toggle('on',s.id===id));if(id==='t4')renderVenn();scrollTo(0,0)};
+$$('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+
+/* ---------- timer ---------- */
+const STAGES=[[0,'Рамка'],[3,'Интервью'],[15,'Теория'],[22,'Подбор техник'],[37,'План и PDF']];
+let tRun=false,tAcc=0,tFrom=0,tInt;
+const tNow=()=>tAcc+(tRun?Date.now()-tFrom:0);
+const tDraw=()=>{const s=Math.floor(tNow()/1000),m=Math.floor(s/60);$('#clock').textContent=String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0');$('#clock').classList.toggle('over',m>=45);
+ if(!tRun&&!tAcc){$('#stageLbl').textContent='Таймер не запущен';$$('nav button').forEach(b=>b.classList.remove('now'));return}
+ let i=STAGES.length-1;while(i>0&&m<STAGES[i][0])i--;const next=STAGES[i+1]?STAGES[i+1][0]:45;
+ $('#stageLbl').textContent=(m>=45?'Время вышло · ':'Сейчас: '+STAGES[i][1]+' · до следующего этапа '+Math.max(0,next-m)+' мин');
+ $$('nav button').forEach((b,j)=>b.classList.toggle('now',j===i));};
+$('#tStart').onclick=()=>{if(tRun){tAcc+=Date.now()-tFrom;tRun=false;clearInterval(tInt);$('#tStart').textContent='Продолжить'}else{tFrom=Date.now();tRun=true;tInt=setInterval(tDraw,1000);$('#tStart').textContent='Пауза'}tDraw()};
+$('#tReset').onclick=()=>{tRun=false;tAcc=0;clearInterval(tInt);$('#tStart').textContent='Старт';tDraw()};
+
+/* ---------- cards ---------- */
+const lvTxt=t=>LEVELS[t.lv[0]]+(t.lv[1]>t.lv[0]?'–'+LEVELS[t.lv[1]]:'');
+const hinted=()=>{const m={};(S.diff||[]).forEach(d=>{const r=DIFF.find(x=>x[0]===d);r&&r[2].forEach(id=>m[id]=(m[id]||0)+1)});return m};
+const cardBody=t=>`<dl><dt>Что делать</dt><dd><ol>${t.st.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></dd><dt>Сколько времени</dt><dd>${esc(t.t)}</dd><dt>Как проверить результат</dt><dd>${esc(t.ch)}</dd>${t.lo?`<dt>На начальных уровнях</dt><dd>${esc(t.lo)}</dd>`:''}${t.pf?`<dt>Типичная ошибка</dt><dd>${esc(t.pf)}</dd>`:''}</dl>`;
+const renderCards=()=>{
+ const q=$('#fQ').value.trim().toLowerCase(),ar=$('#fArea').value,s2=$('#fS2R').value,onlyL=$('#fLvl').checked,onlyH=$('#fHint').checked;
+ const lvl=LEVELS.indexOf(S.info.level||''),H=hinted();
+ let list=T.filter(t=>(!ar||t.a.includes(ar))&&(!s2||t.s===s2)&&(!onlyL||lvl<0||(lvl>=t.lv[0]&&lvl<=t.lv[1]))&&(!onlyH||H[t.id])&&(!q||(t.en+t.ru+t.p+t.e).toLowerCase().includes(q)));
+ list.sort((a,b)=>(H[b.id]||0)-(H[a.id]||0));
+ $('#count').textContent=`Показано ${list.length} из ${T.length}`;
+ $('#cards').innerHTML=list.map(t=>{const sel=S.picked.includes(t.id);return `<div class="card${sel?' sel':''}${H[t.id]?' hint':''}">
+  <div class="ch"><input type="checkbox" data-pick="${t.id}" ${sel?'checked':''} aria-label="Рекомендовать ${esc(t.en)}">
+  <div><div class="en">${esc(t.en)} <span style="font-weight:400">· ${esc(t.ru)}</span><span class="hintmark">подходит по трудностям</span></div>
+  <div class="meta">${t.a.map(a=>esc(AREAS[a].split(' · ')[0])).join(', ')} · ${S2R[t.s]} · ${lvTxt(t)} · лучше всего: ${esc(t.best)}</div></div></div>
+  <p class="prob">«${esc(t.p)}»</p><p>${esc(t.e)}</p>
+  <details><summary>Шаги, время, проверка</summary>${cardBody(t)}</details></div>`}).join('')||'<p class="mute">Ничего не найдено — ослабьте фильтры.</p>';
+ const sg=Object.entries(H).sort((a,b)=>b[1]-a[1]);
+ $('#sugg').innerHTML=sg.length?`<div class="sugg"><b>По отмеченным трудностям подходят:</b><div class="chips">${sg.map(([id,n])=>`<button data-quick="${id}">${S.picked.includes(id)?'✓ ':''}${esc(byId[id].en)}${n>1?' ×'+n:''}</button>`).join('')}</div></div>`:`<div class="sugg mute">Отметьте трудности в интервью (круг 1) — здесь появятся подсказки.</div>`;
+};
+['#fQ','#fArea','#fS2R','#fLvl','#fHint'].forEach(s=>$(s).addEventListener(s==='#fQ'?'input':'change',renderCards));
+const togglePick=id=>{const i=S.picked.indexOf(id);i>=0?S.picked.splice(i,1):S.picked.push(id);save();renderCards();renderPicked();renderVenn()};
+document.addEventListener('change',e=>{if(e.target.dataset.pick)togglePick(e.target.dataset.pick)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-quick]');if(b)togglePick(b.dataset.quick);const u=e.target.closest('[data-unpick]');if(u)togglePick(u.dataset.unpick)});
+const renderPicked=()=>{
+ const n=S.picked.length;
+ $('#picked').innerHTML=`<h3>Выбрано: ${n}</h3><div class="mute">Рекомендуем 3–4 техники.</div>${n>4?'<div class="warn">Больше четырёх — студенту будет трудно начать. Оставьте самые важные.</div>':''}
+ ${S.picked.map(id=>{const t=byId[id];return `<div class="pk"><b>${esc(t.en)}</b><span class="mute">${esc(t.ru)}</span>
+ <label class="f" for="nt_${id}" style="margin-top:6px;font-size:14px">Тактика: когда, на чём, сколько</label>
+ <textarea id="nt_${id}" data-note="${id}" placeholder="Например: 10 минут в метро, слова из рабочих писем">${esc(S.notes[id]||'')}</textarea>
+ <button data-unpick="${id}" style="min-height:32px;padding:2px 10px;font-size:14px;margin-top:6px">Убрать</button></div>`}).join('')||'<p class="mute" style="margin-top:12px">Пока ничего не выбрано.</p>'}`;
+};
+document.addEventListener('input',e=>{if(e.target.dataset.note){S.notes[e.target.dataset.note]=e.target.value;save()}});
+
+/* ---------- materials ---------- */
+const MT=['Читать','Смотреть','Слушать','Практиковать'];
+const renderMats=()=>{$('#mats').innerHTML=S.mats.map((m,i)=>`<div class="mat"><select data-m="${i}" data-f="type" aria-label="Тип">${MT.map(x=>`<option ${m.type===x?'selected':''}>${x}</option>`).join('')}</select><input type="text" data-m="${i}" data-f="title" value="${esc(m.title)}" placeholder="Название и уровень" aria-label="Название"><input type="url" data-m="${i}" data-f="url" value="${esc(m.url)}" placeholder="https://" aria-label="Ссылка"><button data-delm="${i}" aria-label="Удалить">✕</button></div>`).join('')};
+$('#addMat').onclick=()=>{S.mats.push({type:'Читать',title:'',url:''});save();renderMats()};
+document.addEventListener('input',e=>{const el=e.target;if(el.dataset.m!==undefined){S.mats[el.dataset.m][el.dataset.f]=el.value;save()}});
+document.addEventListener('change',e=>{const el=e.target;if(el.dataset.m!==undefined){S.mats[el.dataset.m][el.dataset.f]=el.value;save()}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-delm]');if(b){S.mats.splice(+b.dataset.delm,1);save();renderMats()}});
+
+/* ---------- venn ---------- */
+const vennHTML=()=>`<div class="venn"><div class="c c1"></div><div class="c c2"></div><div class="c c3"></div>
+ <div class="t t1"><b>Цели и трудности</b>${esc(S.venn.c1||'—')}</div>
+ <div class="t t2"><b>Интересы и предпочтения</b>${esc(S.venn.c2||'—')}</div>
+ <div class="t t3"><b>Время и ресурсы</b>${esc(S.venn.c3||'—')}</div>
+ <div class="ctr"><b>Ваши техники</b>${S.picked.slice(0,5).map(id=>esc(byId[id].ru)).join('<br>')||'—'}</div></div>`;
+const renderVenn=()=>{const box=$('#vennPrev');box.innerHTML=vennHTML();const w=box.parentElement.clientWidth-20,v=box.firstElementChild;if(w>0&&w<520){v.style.transform=`scale(${w/520})`;box.style.height=(400*w/520)+'px'}else{v.style.transform='';box.style.height=''}};
+new ResizeObserver(()=>{if($('#t4').classList.contains('on'))renderVenn()}).observe($('main'));
+
+/* ---------- downloads ---------- */
+let DL=null;
+(async()=>{try{if(window.claude?.use)DL=await window.claude.use('downloads')}catch(e){}})();
+const msg=t=>$('#msg').textContent=t;
+const saveFile=async(filename,data)=>{
+ if(DL){try{await DL.save({filename,data});msg('Готово: '+filename);return}catch(e){msg(e?.code==='declined'?'Сохранение отменено.':'Не удалось сохранить файл ('+(e?.code||'ошибка')+').');return}}
+ try{const u=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);msg('Файл сформирован: '+filename+'. Если скачивание не началось, откройте страницу на claude.ai в браузере.')}catch(e){msg('Скачивание недоступно в этом окне.')}
+};
+const slug=()=>((S.info.name||'студент').trim().replace(/\s+/g,'-'))+'-'+(S.info.date||'');
+
+/* ---------- session ---------- */
+$('#saveJson').onclick=()=>saveFile('консультация-'+slug()+'.json',JSON.stringify(S,null,1));
+$('#loadJson').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{S=Object.assign(blank(),JSON.parse(await f.text()));save();fill();showTab('t0')}catch(err){showTab('t4');msg('Не получилось прочитать файл сессии.')}e.target.value=''};
+let armed=0;$('#newSess').onclick=()=>{const b=$('#newSess');if(Date.now()-armed<4000){S=blank();save();fill();showTab('t0');b.textContent='Новая консультация';armed=0}else{armed=Date.now();b.textContent='Точно очистить? Нажмите ещё раз';setTimeout(()=>b.textContent='Новая консультация',4000)}};
+
+/* ---------- PDF ---------- */
+const root=$('#pdfroot');
+const fmtDate=d=>{if(!d)return'';const [y,m,dd]=d.split('-');return `${dd}.${m}.${y}`};
+const fullCard=(t,note)=>`<div class="pc"><div class="en">${esc(t.en)} · ${esc(t.ru)}</div>
+ <div class="meta">${t.a.map(a=>esc(AREAS[a])).join(' · ')} &nbsp;|&nbsp; ${S2R[t.s]}: ${esc(S2R_RU[t.s])} &nbsp;|&nbsp; уровни ${lvTxt(t)}, лучше всего: ${esc(t.best)}</div>
+ <div class="prob">Проблема: «${esc(t.p)}»</div><div>${esc(t.e)}</div>${cardBody(t)}
+ ${note!==undefined?`<div class="tac"><b>Ваша тактика:</b> ${note?nl(note):'—'}</div>`:''}</div>`;
+const paginate=(blocks,footer)=>{
+ root.innerHTML='';const pages=[];
+ const newPage=()=>{const pg=document.createElement('div');pg.className='pg';pg.innerHTML=`<div class="pb"></div><div class="pf"><span>${footer}</span><span class="pn"></span></div>`;root.appendChild(pg);pages.push(pg);return pg.firstElementChild};
+ let body=newPage();
+ for(const b of blocks){if(b==='BREAK'){body=newPage();continue}
+  const w=document.createElement('div');w.innerHTML=b;const el=w.firstElementChild||w;body.appendChild(el);
+  if(body.scrollHeight>body.clientHeight+1&&body.children.length>1){el.remove();body=newPage();body.appendChild(el)}}
+ pages.forEach((p,i)=>p.querySelector('.pn').textContent=(i+1)+' / '+pages.length);
+ return pages;
+};
+const render=async(pages,filename,scale)=>{
+ if(!window.html2canvas||!window.jspdf){msg('Библиотеки для PDF не загрузились. Проверьте интернет и обновите страницу.');return}
+ try{await document.fonts.ready}catch(e){}
+ const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',compress:true});
+ for(let i=0;i<pages.length;i++){msg(`Готовлю PDF: страница ${i+1} из ${pages.length}…`);
+  const c=await html2canvas(pages[i],{scale,backgroundColor:'#ffffff',useCORS:true,logging:false});
+  if(i)pdf.addPage();pdf.addImage(c.toDataURL('image/jpeg',0.9),'JPEG',0,0,210,297)}
+ root.innerHTML='';
+ await saveFile(filename,pdf.output('blob'));
+};
+const busy=on=>{$('#pdfPlan').disabled=on;$('#pdfBank').disabled=on};
+
+$('#pdfPlan').onclick=async()=>{
+ if(!S.picked.length){msg('Сначала выберите техники на вкладке «Подбор техник».');return}
+ busy(true);
+ try{
+ const i=S.info,B=[];
+ B.push(`<div><div class="kicker">[Школа] · Консультация по учебным стратегиям</div><h1>Персональный учебный маршрут</h1>
+  <div class="kv"><div>Студент</div><div>${esc(i.name||'—')}</div><div>Дата</div><div>${esc(fmtDate(i.date))}</div><div>Уровень</div><div>${esc(i.level||'—')}</div><div>Методист</div><div>${esc(i.methodist||'—')}</div></div></div>`);
+ B.push(`<div><h2>Ваш учебный портрет</h2>${vennHTML()}</div>`);
+ if(S.plan.summary)B.push(`<div class="box">${nl(S.plan.summary)}</div>`);
+ const rows=[['Цель',S.c1.goal],['Срок или событие',S.c1.deadline],['Через 2–3 месяца',S.c1.success],['Главные трудности',[S.c1.hard,(S.diff||[]).map(d=>DIFF.find(x=>x[0]===d)?.[1]).filter(Boolean).join('; ')].filter(Boolean).join('\n')],['Интересы',S.c2.topics],['Что нравится',[S.prefs.join(', '),S.c2.likes].filter(Boolean).join('\n')],['Время',[S.c3.time,S.when.join(', ')].filter(Boolean).join(' · ')],['Ресурсы',S.c3.tools]].filter(r=>r[1]);
+ if(rows.length)B.push(`<div><h2>Что мы узнали</h2><div class="kv">${rows.map(r=>`<div>${esc(r[0])}</div><div>${nl(r[1])}</div>`).join('')}</div></div>`);
+ const sk=SKILLS.map((s,k)=>[s,S.skills[k]]);
+ if(sk.some(x=>x[1]))B.push(`<div><h2>Самооценка: навыки самостоятельного обучения</h2><div class="mute" style="font-size:11px;margin-bottom:6px">1 — пока не умею, 5 — уверенно делаю сам. Оцените себя заново через 1–2 месяца.</div>${sk.map(([s,v])=>`<div class="bar"><span>${esc(s)}</span><i><em style="width:${(v||0)*20}%"></em></i><b>${v||'–'}</b></div>`).join('')}</div>`);
+ B.push(`<div><h2>Ваши техники</h2><div style="font-size:12px;color:#555">Техника — проверенный приём. Тактика — как именно вы применяете его в своей жизни.</div></div>`);
+ S.picked.forEach(id=>B.push(fullCard(byId[id],S.notes[id]||'')));
+ const pl=[['Ритм на неделю',S.plan.rhythm],['Первый шаг',S.plan.first],['Как поймём, что работает',S.plan.check],['Пересмотр плана',fmtDate(S.plan.review)]].filter(r=>r[1]);
+ B.push(`<div><h2>План</h2>${pl.length?`<div class="kv">${pl.map(r=>`<div>${esc(r[0])}</div><div>${nl(r[1])}</div>`).join('')}</div>`:''}
+  <div class="box"><b>Цикл самостоятельного обучения</b><div class="cycle" style="margin:6px 0"><b>Notice</b>→<b>Choose</b>→<b>Apply</b>→<b>Evaluate</b></div>Замечаю трудность → выбираю технику → пробую на практике → оцениваю и меняю. Пройдите цикл с каждой техникой за 2–3 недели.</div></div>`);
+ const ms=S.mats.filter(m=>m.title||m.url);
+ if(ms.length)B.push(`<div><h2>Материалы</h2>${ms.map(m=>`<div style="margin:6px 0"><b>${esc(m.type)}:</b> ${esc(m.title)}${m.url?`<br><span class="lnk">${esc(m.url)}</span>`:''}</div>`).join('')}</div>`);
+ B.push(`<div class="box">Полный банк техник и тактик: ${S.plan.bank?`<span class="lnk">${esc(S.plan.bank)}</span>`:'[ссылка]'}<br>Банк материалов: [ссылка]</div>`);
+ await render(paginate(B,'[Школа] · '+esc(i.name||'')),'план-'+slug()+'.pdf',2);
+ }catch(e){console.error(e);msg('Не получилось собрать PDF: '+(e.message||e))}
+ busy(false);
+};
+
+$('#pdfBank').onclick=async()=>{
+ busy(true);
+ try{
+ const B=[`<div><div class="kicker">[Школа]</div><h1>Банк техник и тактик</h1><p style="font-size:14px">${T.length} техник для самостоятельной работы с английским. Каждая карточка — проверенный приём; тактику, как применять его именно вам, вы выбираете сами или вместе с методистом.</p></div>`,
+ `<div><h2>Как устроена карточка</h2><div class="kv"><div>Проблема</div><div>Какую трудность решает техника — словами студента</div><div>Что делать</div><div>Шаги, которые можно выполнить сразу</div><div>Время</div><div>Сколько занимает и как часто</div><div>Проверка</div><div>Как понять, что техника работает</div><div>Уровни</div><div>Для каких уровней подходит и где работает лучше всего</div></div></div>`,
+ `<div><h2>Четыре измерения (модель S²R)</h2><div class="kv">${Object.keys(S2R).map(k=>`<div>${S2R[k]}</div><div>${esc(S2R_RU[k])}</div>`).join('')}</div></div>`,
+ `<div class="box"><b>Цикл самостоятельного обучения</b><div class="cycle" style="margin:6px 0"><b>Notice</b>→<b>Choose</b>→<b>Apply</b>→<b>Evaluate</b></div>Замечаю трудность → выбираю технику → пробую на практике → оцениваю и меняю.</div>`,
+ `<div><h2>Содержание</h2>${Object.entries(AREAS).map(([k,v])=>`<div style="margin:3px 0"><b>${esc(v)}</b> — ${T.filter(t=>t.a[0]===k).map(t=>esc(t.en)).join(', ')}</div>`).join('')}</div>`];
+ for(const [k,v] of Object.entries(AREAS)){B.push('BREAK');B.push(`<div class="area">${esc(v)}</div>`);T.filter(t=>t.a[0]===k).forEach(t=>B.push(fullCard(t)))}
+ await render(paginate(B,'[Школа] · Банк техник и тактик'),'банк-техник-и-тактик.pdf',1.6);
+ }catch(e){console.error(e);msg('Не получилось собрать PDF: '+(e.message||e))}
+ busy(false);
+};
+
+load();fill();tDraw();
+}
+</script>
+</body>
+</html>
